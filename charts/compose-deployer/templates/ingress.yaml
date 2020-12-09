@@ -3,9 +3,9 @@
 {{- if kindIs "map" . }}
 {{- if index . "x-ingress" }}
 {{- $ingress := index . "x-ingress" }}
-{{- if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1") -}}
+{{- if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress") -}}
 apiVersion: networking.k8s.io/v1
-{{- else if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1beta1") -}}
+{{- else if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress") -}}
 apiVersion: networking.k8s.io/v1beta1
 {{- else if ($.Capabilities.APIVersions.Has "extensions/v1beta1") -}}
 apiVersion: extensions/v1beta1
@@ -33,7 +33,7 @@ spec:
         paths:
           {{ $paths := default (list "/") $ingress.paths }}
           {{- range $paths }}
-          {{- if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1") }}
+          {{- if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress") }}
           - path: {{ . }}
             pathType: Prefix
             backend:
