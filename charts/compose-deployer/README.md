@@ -198,7 +198,7 @@ The following properties are supported under the `x-ingress` key on a port confi
 | `paths` | `string[]` | The paths that should forward traffic to this port (defaults to `["/"]`) | No |
 
 **Note:** If the `hosts` are defined but no `cert_issuer`, only the appropriate `Ingress` objects will be created.
-**Note 2:** If a `cert_issuer` is defined but cert-manager is not deployed, no `Certificate` objects will be produced. A comment will be output during render to help with debugging.
+**Note 2:** If a `cert_issuer` is defined but cert-manager is not deployed, no `Certificate` objects will be produced.
 
 #### Example Usage 
 
