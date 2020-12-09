@@ -29,8 +29,6 @@ spec:
     kind: ClusterIssuer
     name: {{ $ingress.cert_issuer }}
 ---
-{{- else }}
-# Skipping Certificate creation for service {{ $name }} because no cert-manager components were located
 {{- end }}
 {{- end }}
 {{- end }}

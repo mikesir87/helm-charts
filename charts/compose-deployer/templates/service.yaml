@@ -1,34 +1,32 @@
 {{- range $name, $service := $.Values.services }}
 {{- if .ports }}
-{{- range $port := .ports }}
-{{- $publishedPort := 0 }}
-{{- $targetPort := 0 }}
-{{- $portMode := "internal" }}
-{{- if kindIs "string" . }}
-  {{- $portConfig := regexSplit ":" . -1 }}
-  {{- $publishedPort = first $portConfig }}
-  {{- $targetPort = last $portConfig }}
-{{- else if kindIs "float64" . }}
-  {{ required "Single value ports must be wrapped in a string" $.Values.missing }}
-{{- else }}
-  {{- $publishedPort = .published }}
-  {{- $targetPort = .target }}
-  {{- $portMode = default "internal" .mode }}
-{{- end}}
 apiVersion: v1
 kind: Service
 metadata: 
-  name: {{ $name }}-{{ $publishedPort }}
+  name: {{ $name }}
   labels:
     {{- include "common_labels" (dict "ServiceName" $name "Service" . "Root" $) | nindent 4 }}
 spec:
-  type: {{ include "service_type_mapping" $portMode }}
+  type: ClusterIP
   ports:
+    {{- range $port := .ports }}
+    {{- $publishedPort := 0 }}
+    {{- $targetPort := 0 }}
+    {{- if kindIs "string" . }}
+      {{- $portConfig := regexSplit ":" . -1 }}
+      {{- $publishedPort = first $portConfig }}
+      {{- $targetPort = last $portConfig }}
+    {{- else if kindIs "float64" . }}
+      {{ required "Single value ports must be wrapped in a string" $.Values.missing }}
+    {{- else }}
+      {{- $publishedPort = .published }}
+      {{- $targetPort = .target }}
+    {{- end}}
     - port: {{ $publishedPort }}
       targetPort: {{ $targetPort }}
+    {{- end }}
   selector:
     {{- include "selector_labels" (dict "ServiceName" $name "Service" . "Root" $) | nindent 4 }}
 ---
-{{- end }}
 {{- end }}
 {{- end }}
