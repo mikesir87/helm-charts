@@ -13,6 +13,9 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{/*
+Common labels applied to all resources
+*/}}
 {{- define "common_labels" -}}
 {{- include "selector_labels" . }}
 helm.sh/chart: {{ include "chart_name" .Root }}
@@ -20,8 +23,11 @@ helm.sh/chart: {{ include "chart_name" .Root }}
 app.kubernetes.io/version: {{ .Root.Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Root.Release.Service }}
-{{- end }}
+{{- end }}  11
 
+{{/*
+Selector labels used for selecting (pulled into common labels)
+*/}}
 {{- define "selector_labels" -}}
 app.kubernetes.io/name: {{ .ServiceName }}
 app.kubernetes.io/instance: {{ .Root.Release.Name }}
