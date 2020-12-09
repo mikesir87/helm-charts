@@ -19,8 +19,7 @@ services:
         x-ingress:
           hosts:
             - vote.localhost
-          paths:
-            - /
+          # Will not render in CI because cert-manager isn't installed
           cert_issuer: letsencrypt
     deploy:
       replicas: 2
