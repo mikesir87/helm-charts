@@ -1,0 +1,56 @@
+{{- range $name, $service := $.Values.services }}
+{{- range $port := .ports }}
+{{- if kindIs "map" . }}
+{{- if index . "x-ingress" }}
+{{- $ingress := index . "x-ingress" }}
+{{- if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1") -}}
+apiVersion: networking.k8s.io/v1
+{{- else if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1beta1") -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else if ($.Capabilities.APIVersions.Has "extensions/v1beta1") -}}
+apiVersion: extensions/v1beta1
+{{- else }}
+{{ required "No supported Ingress kind found" $.Values.missing }}
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "common_labels" (dict "ServiceName" $name "Service" . "Root" $) | nindent 4 }}
+spec:
+  {{- if and $ingress.hosts $ingress.cert_issuer }}
+  tls:
+    {{- range $ingress.hosts }}
+    - hosts:
+        - {{ . | quote }}
+      secretName: {{ include "certificate_secret_name" $name }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range $ingress.hosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          {{ $paths := default (list "/") $ingress.paths }}
+          {{- range $paths }}
+          {{- if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1") }}
+          - path: {{ . }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $name }}-{{ $port.published }}
+                port:
+                  number: {{ $port.published }}
+          {{- else }}
+          - path: {{ . }}
+            backend:
+              serviceName: {{ $name }}-{{ $port.published }}
+              servicePort: {{ $port.published }}
+          {{- end }}
+          {{- end }}
+    {{- end }}
+---
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

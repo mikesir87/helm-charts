@@ -1,0 +1,39 @@
+{{- range $name, $service := $.Values.services }}
+{{- range $port := .ports }}
+{{- if kindIs "map" . }}
+{{- if index . "x-ingress" }}
+{{- $ingress := index . "x-ingress" }}
+{{- if index $ingress "cert_issuer" }}
+{{- $numNames := len $ingress.hosts }}
+{{- $apiVersion := "" }}
+{{- if  ($.Capabilities.APIVersions.Has "cert-manager.io/v1") }}
+{{- $apiVersion = "cert-manager.io/v1" }}
+{{- else if  ($.Capabilities.APIVersions.Has "cert-manager.k8s.io/v1alpha1") }}
+{{- $apiVersion = "certmanager.k8s.io/v1alpha1" }}
+{{- end }}
+{{- if $apiVersion }}
+apiVersion: {{ $apiVersion }}
+kind: Certificate
+metadata:
+  name: ingress-tls-{{ $name }}
+  labels:
+    {{- include "common_labels" (dict "ServiceName" $name "Service" . "Root" $) | nindent 4 }}
+spec:
+  commonName: {{ index $ingress.hosts 0 }}
+  {{- if gt $numNames 1 }}
+  dnsNames:
+    {{- slice $ingress.hosts 1 | toYaml | nindent 4}}
+  {{- end }}
+  secretName: {{ include "certificate_secret_name" $name }}
+  issuerRef:
+    kind: ClusterIssuer
+    name: {{ $ingress.cert_issuer }}
+---
+{{- else }}
+# Skipping Certificate creation for service {{ $name }} because no cert-manager components were located
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

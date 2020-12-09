@@ -1,0 +1,153 @@
+{{ range $serviceName, $service := $.Values.services }}
+{{- $deploy := index . "deploy" | default dict -}}
+{{- $deployMode := default "replicated" $deploy.mode }}
+{{- if eq $deployMode "replicated" }}
+{{- $name := default $serviceName .container_name }}
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: {{ $name }}
+  labels:
+    {{- include "common_labels" (dict "ServiceName" $name "Service" . "Root" $) | nindent 4 }}
+spec:
+  replicas: {{ $deploy.replicas }}
+  selector:
+    matchLabels:
+      {{- include "selector_labels" (dict "ServiceName" $name "Service" . "Root" $) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "common_labels" (dict "ServiceName" $name "Service" . "Root" $) | nindent 8 }}
+    spec:
+      serviceAccountName: deployment-{{ $name }}
+      containers:
+        - name: {{ $name }}
+          image: {{ .image }}
+          {{- if .pull_policy }}
+          imagePullPolicy: {{ include "image_pull_policy_converter" .pull_policy }}
+          {{- end }}
+          {{- if .working_dir }}
+          workingDir: {{ .working_dir }}
+          {{- end }}
+          {{- if .entrypoint }}
+          {{- if kindIs "string" .entrypoint }}
+          command: [{{.entrypoint | toJson}}]
+          {{- else }}
+          command: 
+            {{- .entrypoint | toYaml | nindent 12 }}
+          {{- end }}
+          {{- end }}
+          {{- if .command }}
+          {{- if kindIs "string" .command }}
+          args: 
+            {{- regexSplit " " .command -1 | toYaml | nindent 12 }}
+          {{- else }}
+          args: 
+            {{- .command | toYaml | nindent 12 }}
+          {{- end }}
+          {{- end }}
+          {{- if .ports }}
+          ports:
+            {{- range $port := .ports }}
+            {{- if kindIs "string" . }}
+            {{- $portConfig := regexSplit ":" . -1 }}
+            - containerPort: {{ last $portConfig }}
+            {{- else }}
+            - containerPort: {{ .target }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- if .environment }}
+          env:
+            {{- range $key, $value := .environment }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
+          {{- end }}
+          {{- if .secrets }}
+          volumeMounts:
+            {{- range $secretData := .secrets }}
+            {{- $secretName := $secretData }}
+            {{- $target := cat "/run/secrets/" $secretName | replace " " "" }}
+            {{- if (kindIs "map" $secretData) }}
+              {{- $secretName = index $secretData "source" }}
+              {{- $target = index $secretData "target" }}
+            {{- end }}
+            - name: secret-{{ $secretName }}
+              mountPath: {{ $target }}
+              readOnly: true
+            {{- end }}
+          {{- end }}
+          {{- if $deploy.resources }}
+          resources:
+            {{- if $deploy.resources.reservations }}
+            requests:
+              {{- if $deploy.resources.reservations.memory }}
+              memory: {{ $deploy.resources.reservations.memory }}
+              {{- end }}
+              {{- if $deploy.resources.reservations.cpus }}
+              cpu: {{ $deploy.resources.reservations.cpus }}
+              {{- end }}
+            {{- end }}
+            {{- if $deploy.resources.limits }}
+            limits:
+              {{- if $deploy.resources.limits.memory }}
+              memory: {{ $deploy.resources.limits.memory }}
+              {{- end }}
+              {{- if $deploy.resources.limits.cpus }}
+              cpu: {{ $deploy.resources.limits.cpus }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- if .healthcheck }}
+          readinessProbe:
+            {{- include "healthcheck_spec" .healthcheck | nindent 12 }}
+          livenessProbe:
+            {{- include "healthcheck_spec" .healthcheck | nindent 12 }}
+          {{- end }}
+          {{- if .hostname }}
+          hostname: {{ .hostname }}
+          {{- end }}
+          {{- if .domainname }}
+          subdomain: {{ .domainname }}
+          {{- end }}
+          {{- if or .privileged (or .cap_add (or .cap_drop (or .user .read_only))) }}
+          securityContext:
+            {{- if .privileged }}
+            privileged: true
+            {{- end }}
+            {{- if or .cap_add .cap_drop}}
+            capabilities:
+              {{- if .cap_add }}
+              add: {{ .cap_add | toJson -}}
+              {{- end }}
+              {{- if .cap_drop }}
+              drop: {{ .cap_drop | toJson -}}
+              {{- end }}
+            {{- end}}
+            {{- if .read_only }}
+            readOnlyRootFilesystem: {{ .read_only }}
+            {{- end }}
+            {{- if .user }}
+            runAsUser: {{ .user }}
+            {{- end }}
+          {{- end }}
+      {{- if .secrets }}
+      volumes:
+        {{- range $secretData := .secrets }}
+        {{- $secretName := $secretData }}
+        {{- if kindIs "map" $secretName }}
+          {{- $secretName = index $secretData "source" }}
+        {{- end }}
+        {{- $secretInfo := index $.Values.secrets $secretName }}
+        - name: secret-{{ $secretName }}
+          secret:
+            secretName: {{ $secretName }}
+        {{- end }}
+      {{- end }}
+      {{- if .stop_grace_period }}
+      terminationGracePeriodSeconds: {{ include "convert_time_to_seconds" .stop_grace_period }}
+      {{- end }}
+---
+{{- end }}
+{{- end }}
