@@ -1,10 +1,10 @@
-# Docker Compose Helm Chart
+# Compose Deployer Helm Chart
 
-This helm chart provides the ability to specify a Docker Compose file for the chart's `values.yaml` and it will be converted into Kubernetes resources. It provides direct conversion with support for a few additional components, such as Ingress and TLS certificates (using [cert-manager](https://cert-manager.io/)).
+This helm chart provides the ability to specify a Compose file for the chart's `values.yaml` and it will be converted into Kubernetes resources. It provides direct conversion with support for a few additional components, such as Ingress and TLS certificates (using [cert-manager](https://cert-manager.io/)).
 
 ## Example
 
-Given the following (very simple) Docker Compose file, we can generate equivalent Kubernetes resources.
+Given the following (very simple) Compose file, we can generate equivalent Kubernetes resources.
 
 ```yaml
 services:
