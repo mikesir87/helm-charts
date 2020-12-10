@@ -18,6 +18,9 @@ spec:
     metadata:
       labels:
         {{- include "common_labels" (dict "ServiceName" $name "Service" . "Root" $) | nindent 8 }}
+        {{- if .labels }}
+        {{- .labels | toYaml | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: deployment-{{ $name }}
       containers:
