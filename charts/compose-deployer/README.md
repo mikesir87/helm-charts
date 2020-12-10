@@ -2,39 +2,18 @@
 
 This helm chart provides the ability to specify a Compose file for the chart's `values.yaml` and it will be converted into Kubernetes resources. It provides direct conversion with support for a few additional components, such as Ingress and TLS certificates (using [cert-manager](https://cert-manager.io/)).
 
-## Example
+## Usage
 
-Given the following (very simple) Compose file, we can generate equivalent Kubernetes resources.
+This chart is published and made available at [https://charts.mikesir87.io](https://charts.mikesir87.io).
 
-```yaml
-services:
-  app:
-    image: nginx:alpine
-    ports:
-      - target: 80
-        published: 80
-        protocol: TCP
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost"]
-      interval: 30s
-      retries: 3
-    deploy:
-      mode: replicated
-      replicas: 1
-      resources:
-        limits:
-          cpus: 0.5
-          memory: 50M
-        reservations:
-          cpus: 0.1
-          memory: 20M
+```cli
+helm repo add mikesir87 https://charts.mikesir87.io
+helm repo update
+
+# Deploy the compose file we use for testing
+helm install --generate-name -f https://raw.githubusercontent.com/mikesir87/helm-charts/main/charts/compose-deployer/ci/ci-values.yaml mikesir87/compose-deployer
 ```
 
-We can generate the resources by running the following:
-
-```
-helm template -f docker-compose.yml .
-```
 
 ## Compose Compatibility
 
