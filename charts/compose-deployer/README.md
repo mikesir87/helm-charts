@@ -80,7 +80,7 @@ The following chart outlines the supported elements from the Compose spec. Befor
 | `init` | No | |
 | `ipc` | No | |
 | `isolation` | No | |
-| `labels` | Not yet | |
+| `labels` | Yes | Only adds these labels to the pod spec. For labels on all resources, use `deploy.labels` |
 | `links` | No | |
 | `logging` | No | Going to only use the built-in k8s logging |
 | `mac_address` | No | |
@@ -121,7 +121,7 @@ The following chart outlines the supported elements from the Compose spec. Befor
 | Key | Supported? | Notes |
 |-----|------------|-------|
 | `endpoint_mode` | No | |
-| `labels` | Not yet | |
+| `labels` | Partial | Only the map syntax is supported |
 | `mode` | Partial | `replicated` will create a Deployment. Soon, `global` will create a DaemonSet |
 | `placement` | Not yet | |
 | `replicas` | Yes | |

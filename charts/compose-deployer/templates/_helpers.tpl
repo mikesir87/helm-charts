@@ -23,7 +23,12 @@ helm.sh/chart: {{ include "chart_name" .Root }}
 app.kubernetes.io/version: {{ .Root.Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Root.Release.Service }}
-{{- end }}  11
+{{- if .Service.deploy }}
+{{- if .Service.deploy.labels }}
+{{ .Service.deploy.labels | toYaml }}
+{{- end }}
+{{- end }}
+{{- end }} 
 
 {{/*
 Selector labels used for selecting (pulled into common labels)
