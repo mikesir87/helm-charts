@@ -34,13 +34,13 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ $name }}-{{ $port.published }}
+                name: {{ $name }}
                 port:
                   number: {{ $port.published }}
           {{- else }}
           - path: {{ . }}
             backend:
-              serviceName: {{ $name }}-{{ $port.published }}
+              serviceName: {{ $name }}
               servicePort: {{ $port.published }}
           {{- end }}
           {{- end }}
