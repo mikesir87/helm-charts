@@ -16,6 +16,8 @@ jobs:
           config: .github/ct.yaml
 
   build-unit-matrix:
+    needs:
+      - lint-chart
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -40,7 +42,7 @@ jobs:
           version: v3.4.0
       - name: Install conftest
         run: .github/install-conftest.sh
-      - name: Create Helm templates
+      - name: Validate ${{matrix.chart}} chart using values and policies in ${{ matrix.testDir }}
         run: .github/run-test.sh
         env:
           CHART: ${{ matrix.chart }}
