@@ -8,4 +8,4 @@ cd charts/${CHART}/test/${TEST_DIR}
 helm template -f ./values.yaml ../../ > generated.yaml
 cat generated.yaml
 
-conftest test generated.yaml
+/tmp/conftest test generated.yaml
