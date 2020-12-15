@@ -23,7 +23,7 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - id: set-matrix
-        run: echo "::set-output name=matrix::{\"include\":[{\"chart\":\"compose-deployer\",\"testDir\":\"simple\"}]}"
+        run: echo "::set-output name=matrix::{\"include\":[{\"chart\":\"compose-deployer\"}]}"
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -40,13 +40,12 @@ jobs:
         uses: azure/setup-helm@v1
         with:
           version: v3.4.0
-      - name: Install conftest
-        run: .github/install-conftest.sh
-      - name: Validate ${{matrix.chart}} chart using values and policies in ${{ matrix.testDir }}
-        run: .github/run-test.sh
-        env:
-          CHART: ${{ matrix.chart }}
-          TEST_DIR: ${{ matrix.testDir }}
+      - name: Install modules
+        run: yarn install
+        working_dir: ./charts/${{matrix.chart}}/tests
+      - name: Run tests
+        run: yarn test
+        working_dir: ./charts/${{matrix.chart}}/tests
 
   install-chart:
     name: install-chart
