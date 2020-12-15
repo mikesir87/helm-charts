@@ -15,6 +15,38 @@ jobs:
           command: lint
           config: .github/ct.yaml
 
+  build-unit-matrix:
+    needs:
+      - lint-chart
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: echo "::set-output name=matrix::{\"include\":[{\"chart\":\"compose-deployer\"}]}"
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs:
+      - build-unit-matrix
+    strategy:
+      matrix: ${{fromJson(needs.build-unit-matrix.outputs.matrix)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+        with:
+          fetch-depth: 0
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.4.0
+      - name: Install modules
+        run: yarn install
+        working-directory: ./charts/${{matrix.chart}}/tests
+      - name: Run tests
+        run: yarn test
+        working-directory: ./charts/${{matrix.chart}}/tests
+
   install-chart:
     name: install-chart
     runs-on: ubuntu-latest

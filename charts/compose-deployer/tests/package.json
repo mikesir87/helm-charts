@@ -1,0 +1,13 @@
+{
+  "name": "cdk8s-test",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "cdk8s": "^1.0.0-beta.5",
+    "constructs": "^3.2.71",
+    "jest": "^26.6.3",
+    "js-yaml": "^3.14.1"
+  }
+}
