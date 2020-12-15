@@ -42,10 +42,10 @@ jobs:
           version: v3.4.0
       - name: Install modules
         run: yarn install
-        working_dir: ./charts/${{matrix.chart}}/tests
+        working-directory: ./charts/${{matrix.chart}}/tests
       - name: Run tests
         run: yarn test
-        working_dir: ./charts/${{matrix.chart}}/tests
+        working-directory: ./charts/${{matrix.chart}}/tests
 
   install-chart:
     name: install-chart
