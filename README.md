@@ -15,4 +15,4 @@ helm repo update
 
 ## Available Charts
 
-- [Compose Deployer](./compose-deployer) - converts a Compose file to Kubernetes resources via a Helm chart
+- [Compose Deployer](./charts/compose-deployer) - converts a Compose file to Kubernetes resources via a Helm chart
