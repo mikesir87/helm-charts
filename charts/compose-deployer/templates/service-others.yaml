@@ -11,7 +11,10 @@
 {{- else if kindIs "float64" . }}
   {{ required "Single value ports must be wrapped in a string" $.Values.missing }}
 {{- else }}
-  {{- $publishedPort = .published }}
+  {{- if not .target }}
+    {{- required "All port mappings must have a target" .target }}
+  {{- end }}
+  {{- $publishedPort = default .target .published }}
   {{- $targetPort = .target }}
   {{- $portMode = default "internal" .mode }}
 {{- end}}

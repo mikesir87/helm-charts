@@ -129,6 +129,8 @@ The Compose spec does not provide support for all of the capabilities we would l
 
 In Kubernetes, all network communication goes through a `Service`, including pod-to-pod. The Compose spec was originally designed for local Docker Compose and Swarm environments, where ports used by container-to-container communications didn't need to be explicitly defined. A proposal has been made to add support to the spec ([follow along here](https://github.com/compose-spec/compose-spec/issues/117)). In the meantime, we are adding support (and defaulting) a third option for `ports.mode`.
 
+In addition, the `published` option is optional and will default to the `target` when not specified. The `target` property is required.
+
 ```yaml
 ports:
   - target: 80

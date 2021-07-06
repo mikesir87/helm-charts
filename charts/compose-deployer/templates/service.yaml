@@ -19,7 +19,7 @@ spec:
     {{- else if kindIs "float64" . }}
       {{ required "Single value ports must be wrapped in a string" $.Values.missing }}
     {{- else }}
-      {{- $publishedPort = .published }}
+      {{- $publishedPort = default .target .published }}
       {{- $targetPort = .target }}
     {{- end}}
     - port: {{ $publishedPort }}
