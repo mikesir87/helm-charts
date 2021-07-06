@@ -85,11 +85,11 @@ ClusterIP
 {{- define "ingress_backend" -}}
 {{- if (.Root.Capabilities.APIVersions.Has "networking.k8s.io/v1") }}
 service:
-  name: {{ .ServiceName }}-{{ .Port.published }}
+  name: {{ .ServiceName }}-{{ .Port.published | default .Port.target }}
   port:
-    number: {{ .Port.published }}
+    number: {{ .Port.published | default .Port.target }}
 {{- else }}
-serviceName: {{ .ServiceName }}-{{ .Port.published }}
-servicePort: {{ .Port.published }}
+serviceName: {{ .ServiceName }}-{{ .Port.published | default .Port.target }}
+servicePort: {{ .Port.published | default .Port.target }}
 {{- end }}
 {{- end -}}
