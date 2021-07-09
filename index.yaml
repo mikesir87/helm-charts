@@ -3,6 +3,21 @@ entries:
   compose-deployer:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2021-07-09T06:14:56.70108511Z"
+    description: A Helm chart that uses the Compose spec as its values to create Kubernetes
+      resources
+    digest: 9508853d41c88a8e4ae64971c73a5dba32def820afd18fd41186ee5a926c2f47
+    maintainers:
+    - email: mikesir87@gmail.com
+      name: mikesir87
+      url: https://mikesir87.io
+    name: compose-deployer
+    type: application
+    urls:
+    - https://github.com/mikesir87/helm-charts/releases/download/compose-deployer-0.2.0/compose-deployer-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2021-07-06T18:54:20.416546936Z"
     description: A Helm chart that uses the Compose spec as its values to create Kubernetes
       resources
