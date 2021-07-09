@@ -44,7 +44,7 @@ com.docker.compose.service: {{ .ServiceName }}
 Selector labels used for selecting (pulled into common labels)
 */}}
 {{- define "selector_labels" -}}
-{{- if .ServiceName }}
+{{- if .ServiceName -}}
 app.kubernetes.io/name: {{ .ServiceName }}
 {{- end }}
 app.kubernetes.io/instance: {{ .Root.Release.Name }}
