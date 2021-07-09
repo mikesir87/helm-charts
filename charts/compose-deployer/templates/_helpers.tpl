@@ -23,18 +23,30 @@ helm.sh/chart: {{ include "chart_name" .Root }}
 app.kubernetes.io/version: {{ .Root.Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Root.Release.Service }}
+{{- if .Service }}
 {{- if .Service.deploy }}
 {{- if .Service.deploy.labels }}
 {{ .Service.deploy.labels | toYaml }}
 {{- end }}
 {{- end }}
+{{- end }}
+{{- include "docker_project_labels" . }}
 {{- end }} 
+
+{{- define "docker_project_labels" -}}
+{{- if index .Root.Values "x-docker-project" }}
+com.docker.compose.project: {{ index .Root.Values "x-docker-project" }}
+com.docker.compose.service: {{ .ServiceName }}
+{{- end }}
+{{- end }}
 
 {{/*
 Selector labels used for selecting (pulled into common labels)
 */}}
 {{- define "selector_labels" -}}
+{{- if .ServiceName }}
 app.kubernetes.io/name: {{ .ServiceName }}
+{{- end }}
 app.kubernetes.io/instance: {{ .Root.Release.Name }}
 {{- end -}}
 

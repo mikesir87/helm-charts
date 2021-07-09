@@ -1,0 +1,15 @@
+{{- if index .Values "x-docker-project" }}
+{{- $project := index .Values "x-docker-project" }}
+{{- $status := dict "status" "deployed" }}
+{{- $release := dict "name" $project "version" 1 "info" $status }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sh.helm.release.v1.{{ $project }}
+  labels:
+    name: {{ $project }}
+    owner: helm
+data:
+  release: {{ $release | toJson | b64enc }}
+---
+{{- end }}

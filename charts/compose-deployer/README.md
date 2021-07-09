@@ -125,6 +125,18 @@ For greater insight, simply use `helm template -f your-compose-file .` and view 
 
 The Compose spec does not provide support for all of the capabilities we would like to provide for the platform. But, through the use of extension fields (those that begin with `x-`), we can add our own features.
 
+### Experimental Support for Docker Compose
+
+The new Go-based [Docker Compose CLI](https://github.com/docker/compose-cli) has experimental support for Kubernetes backends. Note that as of writing this, you have to build the CLI yourself to get this backend. Once built, you can create a Kubernetes context.
+
+By adding the `x-docker-project` attribute to the root of your project, additional metadata will be added to the deployment to let you access the application using the compose tooling (such as `docker compose -p <project-name> logs`).
+
+```yaml
+x-docker-project: test
+services:
+  ...
+```
+
 ### Ports to Service type Mapping
 
 In Kubernetes, all network communication goes through a `Service`, including pod-to-pod. The Compose spec was originally designed for local Docker Compose and Swarm environments, where ports used by container-to-container communications didn't need to be explicitly defined. A proposal has been made to add support to the spec ([follow along here](https://github.com/compose-spec/compose-spec/issues/117)). In the meantime, we are adding support (and defaulting) a third option for `ports.mode`.
