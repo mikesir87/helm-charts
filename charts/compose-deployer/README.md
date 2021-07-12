@@ -48,7 +48,7 @@ The following chart outlines the supported elements from the Compose spec. Befor
 | `entrypoint` | Yes | |
 | `env_file` | No | |
 | `environment` | Partial | Only the map syntax is currently supported |
-| `expose` | Not yet | |
+| `expose` | Yes | |
 | `extends` | No | |
 | `external_links` | No | |
 | `extra_hosts` | No | |
