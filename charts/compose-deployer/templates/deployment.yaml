@@ -49,8 +49,9 @@ spec:
             {{- .command | toYaml | nindent 12 }}
           {{- end }}
           {{- end }}
-          {{- if .ports }}
+          {{- if or .ports .expose }}
           ports:
+            {{- if .ports }}
             {{- range $port := .ports }}
             {{- if kindIs "string" . }}
             {{- $portConfig := regexSplit ":" . -1 }}
@@ -58,6 +59,12 @@ spec:
             {{- else }}
             - containerPort: {{ .target }}
             {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- if .expose }}
+            {{- range $port := .expose }}
+            - containerPort: {{ $port }}
+            {{- end}}
             {{- end }}
           {{- end }}
           {{- if .environment }}
