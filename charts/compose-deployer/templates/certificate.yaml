@@ -13,10 +13,8 @@ metadata:
     {{- include "common_labels" (dict "ServiceName" $name "Service" . "Root" $) | nindent 4 }}
 spec:
   commonName: {{ index $ingress.hosts 0 }}
-  {{- if gt $numNames 1 }}
   dnsNames:
-    {{- slice $ingress.hosts 1 | toYaml | nindent 4}}
-  {{- end }}
+    {{- $ingress.hosts | toYaml | nindent 4}}
   secretName: {{ include "certificate_secret_name" $name }}
   issuerRef:
     kind: ClusterIssuer
