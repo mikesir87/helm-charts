@@ -56,8 +56,14 @@ ingress-tls-{{ . }}
 
 {{- define "healthcheck_spec" -}}
 exec:
+  {{- if .test }}
   command: 
     {{- slice .test 1 | toYaml | nindent 4 }}
+  {{- end }}
+  {{- if index . "x-httpGet" }}
+  httpGet:
+    {{- index . "x-httpGet" | toYaml | nindent 4 }}
+  {{- end }}
   {{- if .start_period }}
   initialDelaySeconds: {{ template "convert_time_to_seconds" .start_period }}
   {{- end }}

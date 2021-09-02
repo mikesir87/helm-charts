@@ -3,7 +3,7 @@ name: compose-deployer
 description: A Helm chart that uses the Compose spec as its values to create Kubernetes resources
 
 type: application
-version: 0.4.1
+version: 0.5.0
 appVersion: 1.16.0
 maintainers:
   - name: mikesir87

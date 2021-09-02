@@ -210,6 +210,22 @@ services:
           cert_issuer: letsencrypt
 ```
 
+### Defining Probes
+
+The Compose spec doesn't have a distinction between liveness and readiness checks. Therefore, this chart is simply taking the defined `healthcheck` and using it for both the readiness and liveness probes.
+
+In addition, since the Compose spec was originally written with Docker's healthcheck in mind, it expects the healthcheck to run inside the container (defined as `exec.command` in the probe config). To support the httpGet use case, you can use the `x-httpGet` key under the `healthcheck` key. 
+
+```yaml
+services:
+  app:
+    ...
+    healthcheck:
+      x-httpGet:
+        path: /status
+        port: 80
+```
+
 ## Contributing
 
 If you wish to contribute to this chart, open an issue! Note that not all feature requests will be accepted, as we are trying to focus on core resources and _very_ common use cases.
