@@ -1,1 +1,18 @@
-# A Docker Compose file should be specified
+x-docker-project: test
+services:
+  app:
+    image: mikesir87/compose-k8s-demo:1.3.0 # {"$imagepolicy": "default:compose-demo"}
+    ports:
+      - target: 80
+        x-ingress:
+          hosts:
+            - demo.localhost
+          paths:
+            - /
+          # cert_issuer: letsencrypt
+    deploy:
+      replicas: 2
+    healthcheck:
+      x-httpGet:
+        path: test
+        port: 80
