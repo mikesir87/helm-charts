@@ -1,7 +1,7 @@
 x-docker-project: test
 services:
   app:
-    image: mikesir87/compose-k8s-demo:1.3.0 # {"$imagepolicy": "default:compose-demo"}
+    image: mikesir87/compose-k8s-demo:1.3.0
     ports:
       - target: 80
         x-ingress:
