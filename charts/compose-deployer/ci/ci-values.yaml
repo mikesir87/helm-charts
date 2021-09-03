@@ -40,6 +40,8 @@ services:
             - /
     deploy:
       replicas: 1
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:3000"]
   worker:
     image: mikesir87/votingapp-worker
     deploy:
