@@ -20,7 +20,7 @@ services:
           hosts:
             - vote.localhost
           # Will not render in CI because cert-manager isn't installed
-          cert_issuer: letsencrypt
+          # cert_issuer: letsencrypt
     labels:
       example.com/container-only: foobar
       example.com/container-only2: foobar

@@ -1,1 +1,2 @@
-# A Docker Compose file should be specified
+# There is no default values file. Provide your own compose file
+# in place of your values.yaml

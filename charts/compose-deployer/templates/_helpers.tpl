@@ -55,21 +55,26 @@ ingress-tls-{{ . }}
 {{- end -}}
 
 {{- define "healthcheck_spec" -}}
+{{- if .test -}}
 exec:
   command: 
     {{- slice .test 1 | toYaml | nindent 4 }}
-  {{- if .start_period }}
-  initialDelaySeconds: {{ template "convert_time_to_seconds" .start_period }}
-  {{- end }}
-  {{- if .interval }}
-  periodSeconds: {{ template "convert_time_to_seconds" .interval }}
-  {{- end }}
-  {{- if .timeout }}
-  timeoutSeconds: {{ template "convert_time_to_seconds" .timeout }}
-  {{- end }}
-  {{- if .retries }}
-  failureThreshold: {{ default 10 .retries }}
-  {{- end }}
+{{- else if index . "x-httpGet" -}}
+httpGet:
+{{- index . "x-httpGet" | toYaml | nindent 2 }}
+{{- end }}
+{{- if .start_period }}
+initialDelaySeconds: {{ template "convert_time_to_seconds" .start_period }}
+{{- end }}
+{{- if .interval }}
+periodSeconds: {{ template "convert_time_to_seconds" .interval }}
+{{- end }}
+{{- if .timeout }}
+timeoutSeconds: {{ template "convert_time_to_seconds" .timeout }}
+{{- end }}
+{{- if .retries }}
+failureThreshold: {{ default 10 .retries }}
+{{- end }}
 {{- end }}
 
 {{- define "image_pull_policy_converter" -}}

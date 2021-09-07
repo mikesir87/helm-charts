@@ -1,0 +1,15 @@
+services:
+  using-http:
+    image: nginx:alpine
+    healthcheck:
+      x-httpGet:
+        path: /status
+        port: 80
+  using-exec:
+    image: nginx:alpine
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 2m
+      timeout: 10s
+      retries: 3
+      start_period: 5s
