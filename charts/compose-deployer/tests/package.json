@@ -2,7 +2,8 @@
   "name": "cdk8s-test",
   "version": "1.0.0",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test-watch": "jest --watch"
   },
   "dependencies": {
     "cdk8s": "^1.0.0-beta.5",
