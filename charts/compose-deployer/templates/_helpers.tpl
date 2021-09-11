@@ -110,3 +110,37 @@ serviceName: {{ .ServiceName }}-{{ .Port.published | default .Port.target }}
 servicePort: {{ .Port.published | default .Port.target }}
 {{- end }}
 {{- end -}}
+
+{{- define "pod_volumes" -}}
+{{- range $index, $volumeDescriptor := .containerVolumes }}
+{{- if kindIs "string" $volumeDescriptor }}
+{{- $volumeConfig := mustRegexSplit ":" $volumeDescriptor -1 }}
+{{- $src := index $volumeConfig 0 }}
+{{- $dest := index $volumeConfig 1 }}
+- name: volume-{{ $index }}
+  {{- if hasPrefix "/" $src }}
+  hostPath:
+    path: {{ $src }}
+  {{- else }}
+  persistentVolumeClaim:
+    {{- $volumeData := default dict (index $.volumeConfig $src) }}
+    claimName: {{ default $src (index $volumeData "name")}}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+{{- define "volume_mounts" -}}
+{{- range $index, $volumeDescriptor := .containerVolumes }}
+{{- if kindIs "string" $volumeDescriptor }}
+{{- $volumeConfig := mustRegexSplit ":" $volumeDescriptor -1 }}
+{{- $src := index $volumeConfig 0 }}
+{{- $dest := index $volumeConfig 1 }}
+- name: volume-{{ $index }}
+  mountPath: {{ $dest }}
+  {{- if hasPrefix "/" $src }}
+  readOnly: true
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}
