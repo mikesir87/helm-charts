@@ -91,7 +91,7 @@ The following chart outlines the supported elements from the Compose spec. Befor
 | `tty` | No | |
 | `ulimits` | No | |
 | `user` | Yes | Only supports UIDs, not usernames |
-| `volumes` | Not yet | |
+| `volumes` | Partial - only short-syntax supported so far | See [Volume Support](#volume-support) below |
 | `volumes_from` | No | |
 | `working_dir` | Yes | |
 
@@ -119,6 +119,15 @@ To help with debugging, the translation from Compose to Kubernetes will produce 
 - For each defined port with ingress hosts defined, a unique `Certificate` is created with all names. The first is listed as the common name and all others are SANs. There is currently no ability to share certificates across ports/services.
 
 For greater insight, simply use `helm template -f your-compose-file .` and view the generated resources.
+
+
+## Volume Support
+
+Kubernetes has a very robust volume system and it is a little tricky to map that into the Compose spec. Recognizing that there are many different types of volumes in Kubernetes, I have taken the following approach when creating the mapping:
+
+- Give a volume source, if it starts with a `/`, it is assumed a `hostPath` volume is being requested
+- Given no `driver` is defined, it is assumed a `PersistentVolumeClaim` will be used. A PVC template is also created.
+- If a `driver` is defined, that type of volume is used and the `driver_opts` contains the additional options specific to that driver. View the [Kubernetes Volume docs](https://kubernetes.io/docs/concepts/storage/volumes/) for details on the specific options.
 
 
 ## Additional Features and Support
