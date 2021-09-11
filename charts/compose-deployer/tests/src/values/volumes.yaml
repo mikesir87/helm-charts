@@ -1,0 +1,17 @@
+services:
+  app:
+    image: alpine
+    volumes:
+      - custom-class:/data-vol
+      - pvcdefault:/pvc-default
+      - custom-name:/custom-name
+      - /data:/host-data
+
+volumes:
+  pvcdefault:
+  custom-name:
+    name: overridden-name
+  custom-class:
+    driver_opts:
+      storage_class: gp3
+      size: 50Gi

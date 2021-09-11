@@ -1,0 +1,24 @@
+{{- range $name, $volumeData := $.Values.volumes }}
+{{- $volume := default dict $volumeData }}
+{{- $volumeOptions := default dict $volume.driver_opts }}
+{{- if eq "pvc" (default "pvc" $volume.driver) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ default $name $volume.name }}
+  labels:
+    {{- include "common_labels" (dict "ServiceName" $name "Service" . "Root" $) | nindent 4 }}
+    com.docker.compose.volume: {{ default $name $volume.name }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      {{- $size := default "10Gi" $volumeOptions.size }}
+      storage: {{ $size }}
+  {{- if $volumeOptions.storage_class }}
+  storageClassName: {{ $volumeOptions.storage_class }}
+  {{- end }}
+---
+{{- end }}
+{{- end }}

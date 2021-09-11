@@ -74,8 +74,9 @@ spec:
               value: {{ $value }}
             {{- end }}
           {{- end }}
-          {{- if .secrets }}
+          {{- if or .secrets .volumes }}
           volumeMounts:
+            {{- if .secrets }}
             {{- range $secretData := .secrets }}
             {{- $secretName := $secretData }}
             {{- $target := cat "/run/secrets/" $secretName | replace " " "" }}
@@ -86,6 +87,11 @@ spec:
             - name: secret-{{ $secretName }}
               mountPath: {{ $target }}
               readOnly: true
+            {{- end }}
+            {{- end }}
+            {{- if .volumes }}
+            {{- $volumeConfig := dict "containerVolumes" .volumes "volumeConfig" $.Values.volumes }}
+            {{- include "volume_mounts" $volumeConfig | trim | nindent 12 -}}
             {{- end }}
           {{- end }}
           {{- if $deploy.resources }}
@@ -142,8 +148,13 @@ spec:
             runAsUser: {{ .user }}
             {{- end }}
           {{- end }}
-      {{- if .secrets }}
+      {{- if (or .secrets .volumes) }}
       volumes:
+        {{- if .volumes }}
+        {{- $volumeConfig := dict "containerVolumes" .volumes "volumeConfig" $.Values.volumes }}
+        {{- include "pod_volumes" $volumeConfig | trim | nindent 8 -}}
+        {{- end }}
+        {{- if .secrets }}
         {{- range $secretData := .secrets }}
         {{- $secretName := $secretData }}
         {{- if kindIs "map" $secretName }}
@@ -153,6 +164,7 @@ spec:
         - name: secret-{{ $secretName }}
           secret:
             secretName: {{ $secretName }}
+        {{- end }}
         {{- end }}
       {{- end }}
       {{- if .stop_grace_period }}
