@@ -102,3 +102,35 @@ describe("HostPath volume types", () => {
         expect(volumeMount.readOnly).toBe(true);
     });
 });
+
+describe("Externally-defined ConfigMap volumes", () => {
+    it("defines a basic ConfigMap volume correctly", () => {
+        const volume = deployment.spec.template.spec.volumes.find(v => v.name === "config-test");
+
+        expect(volume).toBeDefined();
+        expect(volume.configMap).toBeDefined();
+        expect(volume.configMap.name).toBe("test");
+    });
+
+    it("mounts a string-based configMap at /<map-name>", () => {
+        const volumeMount = deployment.spec.template.spec.containers[0].volumeMounts.find(v => v.name === "config-test");
+
+        expect(volumeMount).toBeDefined();
+        expect(volumeMount.mountPath).toBe("/test");
+    });
+
+    it("allows a config name to be overridden", () => {
+        const volume = deployment.spec.template.spec.volumes.find(v => v.name === "config-overridden");
+
+        expect(volume).toBeDefined();
+        expect(volume.configMap).toBeDefined();
+        expect(volume.configMap.name).toBe("overridden-name");
+    });
+
+    it("mounts the volume at the correct location when using long-syntax", () => {
+        const volumeMount = deployment.spec.template.spec.containers[0].volumeMounts.find(v => v.name === "config-test2");
+
+        expect(volumeMount).toBeDefined();
+        expect(volumeMount.mountPath).toBe("/another-location");
+    });
+});

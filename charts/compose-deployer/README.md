@@ -33,9 +33,9 @@ The following chart outlines the supported elements from the Compose spec. Befor
 | `cap_add`, `cap_drop` | Yes | |
 | `cgroup_parent` | No | |
 | `command` | Yes | |
-| `configs` | Not yet | |
-| `configs: short-syntax` | Not yet | |
-| `configs: long-syntax` | Not yet | |
+| `configs` | Yes | Only external config supported, as Helm doesn't provide the ability to import non-templated files |
+| `configs: short-syntax` | Yes | |
+| `configs: long-syntax` | Yes | |
 | `container_name` | Yes | |
 | `credential_spec` | No | |
 | `depends_on` | No | |

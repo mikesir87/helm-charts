@@ -6,6 +6,11 @@ services:
       - pvcdefault:/pvc-default
       - custom-name:/custom-name
       - /data:/host-data
+    configs:
+      - test
+      - overridden
+      - source: test2
+        target: /another-location
 
 volumes:
   pvcdefault:
@@ -15,3 +20,12 @@ volumes:
     driver_opts:
       storage_class: gp3
       size: 50Gi
+
+configs:
+  test:
+    external: true
+  test2:
+    external: true
+  overridden:
+    name: overridden-name
+    external: true
