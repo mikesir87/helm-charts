@@ -74,7 +74,7 @@ spec:
               value: {{ $value }}
             {{- end }}
           {{- end }}
-          {{- if or .secrets .volumes }}
+          {{- if or (or .secrets .volumes) .configs }}
           volumeMounts:
             {{- if .secrets }}
             {{- range $secretData := .secrets }}
@@ -92,6 +92,17 @@ spec:
             {{- if .volumes }}
             {{- $volumeConfig := dict "containerVolumes" .volumes "volumeConfig" $.Values.volumes }}
             {{- include "volume_mounts" $volumeConfig | trim | nindent 12 -}}
+            {{- end }}
+            {{- if .configs }}
+            {{- range $configName := .configs }}
+            {{- if kindIs "string" $configName }}
+            - name: config-{{ $configName }}
+              mountPath: /{{ $configName }}
+            {{- else }}
+            - name: config-{{ $configName.source }}
+              mountPath: {{ default (printf "/%s" $configName.source) $configName.target }}
+            {{- end }}
+            {{- end }}
             {{- end }}
           {{- end }}
           {{- if $deploy.resources }}
@@ -148,7 +159,7 @@ spec:
             runAsUser: {{ .user }}
             {{- end }}
           {{- end }}
-      {{- if (or .secrets .volumes) }}
+      {{- if or (or .secrets .volumes) .configs }}
       volumes:
         {{- if .volumes }}
         {{- $volumeConfig := dict "containerVolumes" .volumes "volumeConfig" $.Values.volumes }}
@@ -164,6 +175,21 @@ spec:
         - name: secret-{{ $secretName }}
           secret:
             secretName: {{ $secretName }}
+        {{- end }}
+        {{- end }}
+        {{- if .configs }}
+        {{- range $config := .configs }}
+        {{- if kindIs "string" $config }}
+        {{- $configConfig := index $.Values.configs $config }}
+        - name: config-{{ $config }}
+          configMap: 
+            name: {{ default $config $configConfig.name }}
+        {{- else }}
+        {{- $configConfig := index $.Values.configs $config.source }}
+        - name: config-{{ $config.source }}
+          configMap:
+            name: {{ default $config.source $configConfig.name }}            
+        {{- end }}
         {{- end }}
         {{- end }}
       {{- end }}
