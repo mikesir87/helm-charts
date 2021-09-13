@@ -136,7 +136,7 @@ The Compose spec does not provide support for all of the capabilities we would l
 
 ### Experimental Support for Docker Compose
 
-The new Go-based [Docker Compose CLI](https://github.com/docker/compose-cli) has experimental support for Kubernetes backends. Note that as of writing this, you have to build the CLI yourself to get this backend. Once built, you can create a Kubernetes context.
+The new Go-based [Docker Compose CLI](https://github.com/docker/compose-cli) has experimental support for Kubernetes backends. However, it currently only supports projects it has defined and deployed. Using [my forked repo](https://github.com/mikesir87/compose-cli), it can recognize other Kubernetes deployments. You can [follow this issue](https://github.com/docker/compose-cli/issues/2040) to keep up with the optional support.
 
 By adding the `x-docker-project` attribute to the root of your project, additional metadata will be added to the deployment to let you access the application using the compose tooling (such as `docker compose -p <project-name> logs`).
 
