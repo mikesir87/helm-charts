@@ -182,8 +182,8 @@ describe("vote service validations", () => {
             expect(rule.host).toBe("vote.localhost");
             expect(rule.http.paths.length).toBe(1);
             expect(rule.http.paths[0].path).toBe("/");
-            expect(rule.http.paths[0].backend.serviceName).toBe("vote");
-            expect(rule.http.paths[0].backend.servicePort).toBe(80);
+            expect(rule.http.paths[0].backend.service.name).toBe("vote");
+            expect(rule.http.paths[0].backend.service.port.number).toBe(80);
         });
     });
 });
@@ -229,8 +229,8 @@ describe("result service validations", () => {
             expect(rule.host).toBe("results.localhost");
             expect(rule.http.paths.length).toBe(1);
             expect(rule.http.paths[0].path).toBe("/");
-            expect(rule.http.paths[0].backend.serviceName).toBe("result");
-            expect(rule.http.paths[0].backend.servicePort).toBe(80);
+            expect(rule.http.paths[0].backend.service.name).toBe("result");
+            expect(rule.http.paths[0].backend.service.port.number).toBe(80);
         });
     });
 });
