@@ -3,11 +3,7 @@
 {{- if kindIs "map" . }}
 {{- if index . "x-ingress" }}
 {{- $ingress := index . "x-ingress" }}
-{{- if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress") -}}
 apiVersion: networking.k8s.io/v1
-{{- else  -}}
-apiVersion: networking.k8s.io/v1beta1
-{{- end }}
 kind: Ingress
 metadata:
   name: {{ $name }}
@@ -29,7 +25,6 @@ spec:
         paths:
           {{- $paths := default (list "/") $ingress.paths }}
           {{- range $paths }}
-          {{- if ($.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress") }}
           - path: {{ . }}
             pathType: Prefix
             backend:
@@ -37,12 +32,6 @@ spec:
                 name: {{ $name }}
                 port:
                   number: {{ $port.published | default $port.target }}
-          {{- else }}
-          - path: {{ . }}
-            backend:
-              serviceName: {{ $name }}
-              servicePort: {{ $port.published | default $port.target }}
-          {{- end }}
           {{- end }}
     {{- end }}
 ---
